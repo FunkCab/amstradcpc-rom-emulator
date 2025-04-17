@@ -23,7 +23,7 @@ PROJ_NAME=amstradcpc-rom-emulator
 
 #STM_COMMON=../../..
 # You need libs somewhere!
-STM_COMMON=../STM32F4-Discovery_FW_V1.1.0
+STM_COMMON=../
 
 CC=arm-none-eabi-gcc
 OBJCOPY=arm-none-eabi-objcopy
@@ -57,10 +57,15 @@ CFLAGS += -specs=nano.specs -specs=rdimon.specs -lc -lrdimon
 #CFLAGS += -DDISABLE_ALL_BUT_SHOW_MAIN_THREAD_ACTIVITY
 
 # Include files from STM libraries
-CFLAGS += -I$(STM_COMMON)/Utilities/STM32F4-Discovery
-CFLAGS += -I$(STM_COMMON)/Libraries/CMSIS/Include 
-CFLAGS += -I$(STM_COMMON)/Libraries/CMSIS/ST/STM32F4xx/Include
-CFLAGS += -I$(STM_COMMON)/Libraries/STM32F4xx_StdPeriph_Driver/inc
+CFLAGS += -I/home/cabbage/stfm4lib/STM32F4-Discovery
+
+CFLAGS += -I/home/cabbage/stfm4lib/STM32F4-Discovery/Libraries/CMSIS/Include
+
+
+CFLAGS += -I/home/cabbage/stfm4lib/STM32F4-Discovery/Libraries/CMSIS/Device/ST/STM32F4xx/Include
+
+CFLAGS += -I/home/cabbage/stfm4lib/STM32F4-Discovery/Libraries/STM32F4xx_StdPeriph_Driver/inc
+
 
 
 # add startup file to build
@@ -69,8 +74,8 @@ SRCS += startup_stm32f4xx.s
 SRCS += interrupt.S
 
 OBJS = $(SRCS:.c=.o)
+vpath %.c /home/cabbage/stfm4lib/STM32F4-Discovery/Libraries/STM32F4xx_StdPeriph_Driver/src /home/cabbage/stfm4lib/STM32F4-Discovery
 
-vpath %.c $(STM_COMMON)/Libraries/STM32F4xx_StdPeriph_Driver/src $(STM_COMMON)/Utilities/STM32F4-Discovery
 
 .PHONY: proj
 
