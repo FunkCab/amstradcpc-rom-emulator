@@ -1,0 +1,77 @@
+************************************
+** FF OSD Release Notes
+** Keir Fraser <keir.xen@gmail.com>
+************************************
+
+** v1.9 - 29 July 2021
+ - Support AT32F403 chip as alternative to STM32F103
+ - Support momentary-action hotkeys
+
+** v1.8 - 17 January 2020
+ - Support VGA (30kHz) video timing
+ - Support PA7 (SPI1) as display-output pin for higher-resolution VGA OSD
+ - Run-time configuration enhancements:
+   - Display Enable (PA15): Active HIGH, Active LOW, Disabled*
+   - Display Height: Double, Normal*
+   - Pixel Timing: 15kHz*, VGA, Auto
+   - Sync Polarity: High, Low*, Auto
+ - Amiga: WASD hotkeys to quickly move the OSD box
+
+** v1.7 - 9 October 2019
+ - I2C: Bidirectional communications to Gotek
+   - Next FF release (v3.5a) will **REQUIRE** this firmware!
+   - PLEASE UPDATE!!
+ - Amiga: Hotkeys control Gotek buttons via I2C
+   - The physical connection via A3-A5 **no longer works**
+   - A3-A5 are held LOW to force disconnection from Gotek
+   - A3-A5 may be repurposed in future
+ - Bug fixes:
+   - Fixed screen corruption after saving config to Flash
+   - Fixed I2C corruption after saving config to Flash
+   - Amiga hotkeys are edge triggered (initial keypress only)
+ - Implement Watchdog to reset OSD if it hangs
+
+** v1.6 - 30 September 2019
+ - I2C: Fix FF-OSD extended protocol handling
+   - No more phantom button presses
+ - Amiga: Clear keymap on C-A-A reset
+
+** v1.5 - 28 September 2019
+ - Fix Rotary Encoder support (broken in v1.4)
+ - Amiga: L.Ctrl+L.Alt+Del toggles OSD on/off
+ - Compile-time options:
+   - Amiga hotkeys F1-F10 can control pins B8-B10
+   - Switch ROMs, switch Gotek DF0/DF1, switch PAL/NTSC, ...
+   - Support external video buffer via Output Enable at A15
+
+** v1.4 - 25 September 2019
+ - Further improvements to display stability
+ - Support Gotek buttons for OSD configuration
+   - Requires FlashFloppy v3.4a or later
+ - Jumper A1-A2 to reset FF OSD to factory defaults
+
+** v1.3 - 24 September 2019
+ - Improved display stability (no visible glitches)
+ - FlashFloppy: Support custom I2C protocol when A0-A1 pins jumpered
+   - Enhanced display output (eg. selective double height rows)
+   - Allows I2C bus sharing with original OLED or LCD display
+ - Amiga keyboard: HELP replaces F1 as the FF OSD Config hotkey
+ - Amiga keyboard: L.Ctrl-L.Alt-Return steals the keyboard
+   - L.Ctrl and L.Alt do not need to be held while keyboard is stolen
+
+** v1.2 - 20 September 2019
+ - Move Gotek button outputs from C13-15 to A3-5
+   - C13-15 are weak outputs
+   - C13-15 are in use (LED, crystal) on many "Pill" boards
+   - C13-15 not available at a header on some "Pill" boards
+
+** v1.1 - 17 September 2019
+ - Support Amiga keyboard for configuration and Gotek button presses
+   - L.Alt + L.Ctrl must be held to enable the following magic keys
+     - Left Arrow: Down/Left; Right Arrow: Up/Right; Up Arrow: Select
+     - F1: Enter the FF OSD configuration menu
+ - Configuration: Add a Save/Use/Discard/Reset selector
+ - Sync IRQ: Avoid spin-waiting in this high-priority interrupt
+
+** v1.0 - 13 September 2019
+** Initial release
