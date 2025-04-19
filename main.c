@@ -89,6 +89,9 @@ enum sysclk_freq {
 // --------------------------
 // 	IMPORTED MAIN FROM LCD CODE
 // --------------------------
+
+//lcd_init (); //call lcd start
+
 void lcd_send_cmd (char cmd)
 {
   char data_u, data_l;
@@ -578,14 +581,16 @@ void build_sector_pointer_table(uint32_t *sector_table, uint8_t * track, uint8_t
 
 
 }
-
+// ----------------------
+// START OF MAIN LOOP TODO 
+// ----------------------
 
 // probably dont need to turn the optimiser off, but it kept on annoying me at the time
 int __attribute__((optimize("O0")))  main(void) {
 	char fname_buffer[20];
 	char *diskfname = fname_buffer;
         FIL fil;
-
+		//lcd_init ();
 #ifdef ENABLE_SEMIHOSTING
         initialise_monitor_handles();   /*rtt*/
 	printf("Semi hosting on\n");
