@@ -17,6 +17,7 @@
 
 uint16_t var;
 char str[40];
+char LCD_Message[50];
 #define SLAVE_ADDRESS_LCD (0x27) // change this according to ur setup
 //extern void delay(int ms);
 //-----------------------------------
@@ -43,6 +44,8 @@ extern volatile uint8_t *disk_info_buffer;
 extern volatile uint32_t *sector_ptrs;
 
 extern volatile uint8_t *fdc_log_ptr;
+
+//extern volatile char data[50];
 
 #ifdef ENABLE_SEMIHOSTING
 extern void initialise_monitor_handles(void);   /*rtt*/
@@ -587,6 +590,7 @@ void build_sector_pointer_table(uint32_t *sector_table, uint8_t * track, uint8_t
 
 // probably dont need to turn the optimiser off, but it kept on annoying me at the time
 int __attribute__((optimize("O0")))  main(void) {
+	
 	char fname_buffer[20];
 	char *diskfname = fname_buffer;
         FIL fil;
@@ -713,6 +717,7 @@ int __attribute__((optimize("O0")))  main(void) {
 					fdc_write_flush_count=0;  // kill the countdown
 					f_close(&fil);
 					res = f_open(&fil, diskfname, FA_READ);
+					//LCD_Message = (diskfname);
 					//GPIOA->ODR = 1;
 
 				}
