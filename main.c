@@ -619,7 +619,7 @@ int __attribute__((optimize("O0")))  main(void) {
 	config_gpio_addr();
 	/* PC{0..2} and PC8 and PC{10..12} */
 	config_gpio_portc();
-
+	
         config_gpio_dbg();
 
         NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4); 
@@ -627,7 +627,8 @@ int __attribute__((optimize("O0")))  main(void) {
 	SysTick->CTRL  = 0;
 	config_PC1_int();
 	config_PC4_int();
-
+	// start lcd
+	lcd_init();
         SD_NVIC_Configuration(); 
 
 	uint32_t *p;
@@ -653,7 +654,8 @@ int __attribute__((optimize("O0")))  main(void) {
         }
 	// Do not use sprintf here
 	compose_disk_name(diskfname, *disk_select_port);
-
+	lcd_send_string("TESTING OUTPUT")
+	
 	uint8_t *disk_info_buffer_ptr = (uint8_t *) &disk_info_buffer;
 
 	// load first 256 bytes of disk
