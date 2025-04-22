@@ -9,7 +9,7 @@ STLINK=~/stlink.git
 
 #
 #
-SRCS=diskio.c  ff.c main.c stm32f4_discovery.c  stm32f4_discovery_sdio_sd.c system_stm32f4xx.c misc_handlers.c
+SRCS=diskio.c  ff.c main.c stm32f4_discovery.c  stm32f4_discovery_sdio_sd.c system_stm32f4xx.c misc_handlers.c i2c.c uart.c
 
 # Library modules
 SRCS += stm32f4xx_syscfg.c misc.c stm32f4xx_gpio.c stm32f4xx_rcc.c stm32f4xx_usart.c stm32f4xx_sdio.c stm32f4xx_dma.c stm32f4xx_exti.c stm32f4xx_pwr.c 
