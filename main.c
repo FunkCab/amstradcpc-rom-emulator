@@ -542,7 +542,8 @@ FRESULT save_track(FIL *fil, uint32_t track_number, uint8_t *track, uint8_t *dis
 
 
 // b needs to point to a buffer at least 12 chars long
-void compose_disk_name(char *b, uint8_t num) {
+void compose_disk_name(char *b, uint8_t num) 
+{
     char src[]= "CPCxxx.DSK";
 
     uint8_t t;
@@ -550,16 +551,21 @@ void compose_disk_name(char *b, uint8_t num) {
     char *p,*q;
     p  = src;
     q = b;
-    while (*p) {
-       if (*p != 'x') {
+    while (*p) 
+	{
+       if (*p != 'x') 
+	   {
           *q++ = *p++;
-       } else {
-          for (int y=2;y>=0;y--) {
+       } 
+	   else 
+	   {
+          for (int y=2;y>=0;y--)
+			{
             t = x%10;
             q[y] = t + '0';
             x =x/10;
-          }
-          q+=3; p+=3;
+          	}
+          	q+=3; p+=3;
        }
     }
     *q=0;
@@ -575,7 +581,8 @@ void build_sector_pointer_table(uint32_t *sector_table, uint8_t * track, uint8_t
 	sectors = track[0x15];
 	ptr = track + 0x100;
 	//printf("sectors in track = %d\n",sectors);
-	for (int s=0; s<sectors;s++) {
+	for (int s=0; s<sectors;s++) 
+	{
 	   rec = track[0x18 + (s*8) + 2];
 	   //printf("sector id %02x, addr = %08x\n",rec,ptr);
 	   sector_table[rec & 0x1f] = (uint32_t)ptr;
@@ -589,7 +596,8 @@ void build_sector_pointer_table(uint32_t *sector_table, uint8_t * track, uint8_t
 // ----------------------
 
 // probably dont need to turn the optimiser off, but it kept on annoying me at the time
-int __attribute__((optimize("O0")))  main(void) {
+int __attribute__((optimize("O0")))  main(void) 
+{
 	
 	char fname_buffer[20];
 	char *diskfname = fname_buffer;
@@ -611,7 +619,7 @@ int __attribute__((optimize("O0")))  main(void) {
 	// Enable CCMRAM clock
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_CCMDATARAMEN, ENABLE); 
 
-        config_backup_sram();
+     config_backup_sram();
 
 	/* PD{8..15}  and PD2 for SD card MOSI*/
 	config_gpio_data();
@@ -620,16 +628,16 @@ int __attribute__((optimize("O0")))  main(void) {
 	/* PC{0..2} and PC8 and PC{10..12} */
 	config_gpio_portc();
 	
-        config_gpio_dbg();
+    config_gpio_dbg();
 
-        NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4); 
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4); 
 
 	SysTick->CTRL  = 0;
 	config_PC1_int();
 	config_PC4_int();
 	// start lcd
 	lcd_init();
-        SD_NVIC_Configuration(); 
+    SD_NVIC_Configuration(); 
 
 	uint32_t *p;
 	p = (uint32_t *) &romdis;
@@ -638,35 +646,42 @@ int __attribute__((optimize("O0")))  main(void) {
 	//__enable_irq();
 
 
-        memset(&fs32, 0, sizeof(FATFS));
-        res = f_mount(&fs32, "",0);
-        //res = f_mount(0, &fs32);
-        if (res != FR_OK) {
-                blink_pa6_pa7();
-        }
+	memset(&fs32, 0, sizeof(FATFS));
+	res = f_mount(&fs32, "",0);
+	//res = f_mount(0, &fs32);
+
+    if (res != FR_OK) 
+	{
+        blink_pa6_pa7();
+    }
 
 
 
-        if ((*disk_select_port ^ *disk_select_port_complement) != 0xff) {
+    if ((*disk_select_port ^ *disk_select_port_complement) != 0xff) 
+	{
            // Default to CPC000.DSK if cannot find old config in RAM
            *disk_select_port = 0x00;
            *disk_select_port_complement = 0xff;
-        }
+    }
+	
 	// Do not use sprintf here
 	compose_disk_name(diskfname, *disk_select_port);
-	lcd_send_string("TESTING OUTPUT")
+	
 	
 	uint8_t *disk_info_buffer_ptr = (uint8_t *) &disk_info_buffer;
 
 	// load first 256 bytes of disk
-        if (load_disk_info(&fil,diskfname, disk_info_buffer_ptr) != FR_OK) {
+    if (load_disk_info(&fil,diskfname, disk_info_buffer_ptr) != FR_OK) 
+	{
 	   // First try to reset the disk_select_port back to zero
            *disk_select_port = 0x00;
            *disk_select_port_complement = 0xff;
 	   compose_disk_name(diskfname, *disk_select_port);
-           if (load_disk_info(&fil,diskfname, disk_info_buffer_ptr) != FR_OK) {
+        
+	    if (load_disk_info(&fil,diskfname, disk_info_buffer_ptr) != FR_OK) 
+		{
 	      blink_pa6_pa7();
-	   }
+	   	}
 	}
 
 	
@@ -686,14 +701,19 @@ int __attribute__((optimize("O0")))  main(void) {
 	}
 #endif
 		
-	while(1) {
-		if (fdc_write_flush_count) {
-			//GPIOA->ODR = 1;
-			//asm volatile ("nop");
-			//GPIOA->ODR = 0;
-			// there must have been a write
-			fdc_write_flush_count--;
-			if (fdc_write_flush_count == 0) {
+	while(1) 
+	{
+		lcd_send_string("TESTING OUTPUT")
+		if (fdc_write_flush_count) 
+		{
+		//GPIOA->ODR = 1;
+		//asm volatile ("nop");
+		//GPIOA->ODR = 0;
+		// there must have been a write
+		fdc_write_flush_count--;
+
+			if (fdc_write_flush_count == 0) 
+			{
 				//GPIOA->ODR = 1;
 				f_close(&fil);		// fclose the last dsk
 				res = f_open(&fil, diskfname, FA_WRITE);
@@ -702,61 +722,70 @@ int __attribute__((optimize("O0")))  main(void) {
 				res = f_open(&fil, diskfname, FA_READ);
 			}
 		}
-		if (!(main_thread_command & 0xc0000000) && (main_thread_command & 0xff)) {
-			switch (main_thread_command) {
-			   case (MAIN_THREAD_SEEK_COMMAND): {
+
+		if (!(main_thread_command & 0xc0000000) && (main_thread_command & 0xff)) 
+		{
+			switch (main_thread_command) 
+			{
+			   case (MAIN_THREAD_SEEK_COMMAND): 
+			   {
 				// SEEK
 				main_thread_command |= 0x40000000;
 				// check if there is a pending write
-				if (fdc_write_flush_count) {
-					//*fdc_log_ptr++ = 0xff;
-					//*fdc_log_ptr++ = 0xfe;
-					//GPIOA->ODR = 0;
-					f_close(&fil);		// fclose the last dsk
-					res = f_open(&fil, diskfname, FA_WRITE);
-					
-					save_track(&fil, fdc_prev_track, (uint8_t *) &track_buffer, disk_info_buffer_ptr);
-					fdc_write_flush_count=0;  // kill the countdown
-					f_close(&fil);
-					res = f_open(&fil, diskfname, FA_READ);
-					//LCD_Message = (diskfname);
-					//GPIOA->ODR = 1;
+					if (fdc_write_flush_count) 
+					{
+						//*fdc_log_ptr++ = 0xff;
+						//*fdc_log_ptr++ = 0xfe;
+						//GPIOA->ODR = 0;
+						f_close(&fil);		// fclose the last dsk
+						res = f_open(&fil, diskfname, FA_WRITE);
+						
+						save_track(&fil, fdc_prev_track, (uint8_t *) &track_buffer, disk_info_buffer_ptr);
+						fdc_write_flush_count=0;  // kill the countdown
+						f_close(&fil);
+						res = f_open(&fil, diskfname, FA_READ);
+						//LCD_Message = (diskfname);
+						//GPIOA->ODR = 1;
 
-				}
-				//
-				// There is not much point in failing if load_track fails
-				// 2nd arg below is actually the cylinder to seek to
+					}
+					//
+					// There is not much point in failing if load_track fails
+					// 2nd arg below is actually the cylinder to seek to
 
-				//*fdc_log_ptr++ = 0xef;
-				//*fdc_log_ptr++ = 0xee;
+					//*fdc_log_ptr++ = 0xef;
+					//*fdc_log_ptr++ = 0xee;
 				load_track(&fil, main_thread_data, (uint8_t *) &track_buffer, disk_info_buffer_ptr);
 				build_sector_pointer_table((uint32_t *)&sector_ptrs, (uint8_t *) &track_buffer,disk_info_buffer_ptr);
 				main_thread_command |= 0xc0000000;
-				
+							
 				break;
-                           }
-			   case (MAIN_THREAD_CHANGE_DISK_COMMAND): {
+				}
+			   	case (MAIN_THREAD_CHANGE_DISK_COMMAND): 
+				{
 				// CHANGE DISK
 				main_thread_command |= 0x40000000; // somewhat pointless
 				f_close(&fil);		// fclose the last dsk
 				compose_disk_name(diskfname, *disk_select_port);
-#ifdef ENABLE_SEMIHOSTING_CHANGE_DISK
-				printf("  new disk %s, track %d, addr %08X\n",diskfname,fdc_track,&track_buffer);
-#endif
-        			if (load_disk_info(&fil,diskfname, disk_info_buffer_ptr) != FR_OK) {
-#ifdef ENABLE_SEMIHOSTING_CHANGE_DISK
-					printf("  failed loading that disk. Try disk 0 instead\n");
-#endif
-	   				// First try to reset the disk_select_port back to zero
-           				*disk_select_port = 0x00;
-           				*disk_select_port_complement = 0xff;
-	   				compose_disk_name(diskfname, *disk_select_port);
-           				if (load_disk_info(&fil,diskfname, disk_info_buffer_ptr) != FR_OK) {
-	      				   blink_pa6_pa7();
-	   				}
-				}
+				#ifdef ENABLE_SEMIHOSTING_CHANGE_DISK
+								printf("  new disk %s, track %d, addr %08X\n",diskfname,fdc_track,&track_buffer);
+				#endif
+					if (load_disk_info(&fil,diskfname, disk_info_buffer_ptr) != FR_OK) 
+					{
+					#ifdef ENABLE_SEMIHOSTING_CHANGE_DISK
+								printf("  failed loading that disk. Try disk 0 instead\n");
+					#endif
+						// First try to reset the disk_select_port back to zero
+						*disk_select_port = 0x00;
+						*disk_select_port_complement = 0xff;
+						compose_disk_name(diskfname, *disk_select_port);
+
+						if (load_disk_info(&fil,diskfname, disk_info_buffer_ptr) != FR_OK) 
+						{
+							blink_pa6_pa7();
+						}
+					}
 				// reload the current track
-			        load_track(&fil, fdc_track, (uint8_t *) &track_buffer, disk_info_buffer_ptr);
+			    load_track(&fil, fdc_track, (uint8_t *) &track_buffer, disk_info_buffer_ptr);
 				build_sector_pointer_table((uint32_t *)&sector_ptrs, (uint8_t *) &track_buffer,disk_info_buffer_ptr);
 
 				main_thread_command = 0x00000000; 
