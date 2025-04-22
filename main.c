@@ -4,6 +4,13 @@
 #include "stm32f4_discovery.h"
 #include "stm32f4xx.h"
 #include "stm32f4_discovery_sdio_sd.h"
+#include "i2c.h"
+#include "uart.h"
+#include "stdlib.h"
+#include "LiquidCrystal_PCF8574.h"
+
+uint16_t var;
+char str[40];
 
 #include "ff.h"
 #include "diskio.h"
@@ -474,6 +481,16 @@ void build_sector_pointer_table(uint32_t *sector_table, uint8_t * track, uint8_t
 
 // probably dont need to turn the optimiser off, but it kept on annoying me at the time
 int __attribute__((optimize("O0")))  main(void) {
+	USART2_Init();
+	i2c_init();
+	lcd_init();
+	lcd_clear();
+
+
+
+
+
+
 	char fname_buffer[20];
 	char *diskfname = fname_buffer;
         FIL fil;
@@ -568,6 +585,18 @@ int __attribute__((optimize("O0")))  main(void) {
 #endif
 		
 	while(1) {
+
+
+		setCursor(0,0);
+		lcd_send_string("LCD 2004 I2C w STM32");
+		setCursor(0,1);
+		lcd_send_string("EmbeddedExpert.io");
+		setCursor(0,2);
+		lcd_send_string("Bare Metal");
+		setCursor(0,3);
+		sprintf(str,"var=%d",++var);
+		lcd_send_string(str);	
+		
 		if (fdc_write_flush_count) {
 			//GPIOA->ODR = 1;
 			//asm volatile ("nop");
