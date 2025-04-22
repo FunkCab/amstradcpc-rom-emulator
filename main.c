@@ -596,7 +596,7 @@ int __attribute__((optimize("O0")))  main(void) {
 		setCursor(0,3);
 		sprintf(str,"var=%d",++var);
 		lcd_send_string(str);	
-		
+
 		if (fdc_write_flush_count) {
 			//GPIOA->ODR = 1;
 			//asm volatile ("nop");
