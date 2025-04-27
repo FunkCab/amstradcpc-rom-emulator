@@ -71,7 +71,8 @@ void delay_ms(const uint16_t ms)
       __asm volatile ("nop");
    }
 }
-void blink_pa6_pa7(void) {
+void blink_pa6_pa7(void) 
+{
 
         while(1) {
                 GPIOA->ODR = 0x0040;
@@ -81,7 +82,8 @@ void blink_pa6_pa7(void) {
         }
 }
 
-enum sysclk_freq {
+enum sysclk_freq
+{
     SYSCLK_42_MHZ=0,
     SYSCLK_84_MHZ,
     SYSCLK_168_MHZ,
@@ -162,10 +164,6 @@ void lcd_init (void)
 	lcd_send_cmd (0x06); //Entry mode set --> I/D = 1 (increment cursor) & S = 0 (no shift)
 	delay_ms(1);
 	lcd_send_cmd (0x0C); //Display on/off control --> D = 1, C and B = 0. (Cursor and blink, last two bits)
-
-
-
-
 
 }
 
@@ -281,7 +279,8 @@ void SDIO_IRQHandler(void)
 }
 
 // _IORQ interrupt
-void config_PC1_int(void) {
+void config_PC1_int(void)
+{
         EXTI_InitTypeDef EXTI_InitStruct;
         NVIC_InitTypeDef NVIC_InitStruct;
 
@@ -318,7 +317,8 @@ void config_PC1_int(void) {
 
 
 
-void config_PC4_int(void) {
+void config_PC4_int(void) 
+{
         EXTI_InitTypeDef EXTI_InitStruct;
         NVIC_InitTypeDef NVIC_InitStruct;
 
@@ -356,7 +356,8 @@ void config_PC4_int(void) {
 /* Input Signals GPIO pins on ROMEN -> PC2, IORQ -> PC1, WR -> PC0 */
 /* Output Signals GPIO pins on ROMDIS -> PC3. need to make it open collector with a pullup */
 /* SD card uses PC10, PC11, PC12 out and PC8 in */
-void config_gpio_portc(void) {
+void config_gpio_portc(void) 
+{
 	GPIO_InitTypeDef  GPIO_InitStructure;
 	/* GPIOC Periph clock enable */
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
@@ -381,7 +382,8 @@ void config_gpio_portc(void) {
 }
 
 /* Input/Output data GPIO pins on PD{8..15}. Also PD2 is used fo MOSI on the STM32F407VET6 board I have */
-void config_gpio_data(void) {
+void config_gpio_data(void) 
+{
 	GPIO_InitTypeDef  GPIO_InitStructure;
 	/* GPIOD Periph clock enable */
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
@@ -405,7 +407,8 @@ void config_gpio_data(void) {
 }
 
 /* Input Address GPIO pins on PE{0..15} */
-void config_gpio_addr(void) {
+void config_gpio_addr(void) 
+{
 	GPIO_InitTypeDef  GPIO_InitStructure;
 	/* GPIOE Periph clock enable */
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
@@ -424,7 +427,8 @@ void config_gpio_addr(void) {
 }
 
 /* Debug GPIO pins on PA0 */
-void config_gpio_dbg(void) {
+void config_gpio_dbg(void) 
+{
 	GPIO_InitTypeDef  GPIO_InitStructure;
 	/* GPIOA Periph clock enable */
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
@@ -441,7 +445,8 @@ void config_gpio_dbg(void) {
 }
 
 
-void config_backup_sram(void) {
+void config_backup_sram(void) 
+{
 
         RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR,ENABLE);
         PWR_BackupAccessCmd(ENABLE);
@@ -468,7 +473,8 @@ FRESULT load_disk_info(FIL *fil,char *fname, uint8_t *buffer) {
 	return res;
 }
 
-FRESULT load_track(FIL *fil, uint32_t track_number, uint8_t *track, uint8_t *disk_info) {
+FRESULT load_track(FIL *fil, uint32_t track_number, uint8_t *track, uint8_t *disk_info) 
+{
         UINT BytesRead;
         FRESULT res;
 
@@ -476,21 +482,25 @@ FRESULT load_track(FIL *fil, uint32_t track_number, uint8_t *track, uint8_t *dis
 	uint32_t track_size;
 	int i;
 
-	if ((disk_info[0]=='E') && (disk_info[1]=='X')) {
+	if ((disk_info[0]=='E') && (disk_info[1]=='X')) 
+	{
 	   // Must be EXTENDED CPC DSK
 #ifdef ENABLE_SEMIHOSTING_LOAD_TRACK
 	if (track_number == 0x14) {
 	   printf("EXTENDED DISK\n");
 	}
 #endif
-	   for (i=0;i<track_number;i++) {
+		for (i=0;i<track_number;i++) 
+	   	{
 	      offset+=(disk_info[0x34+i]<<8);
-           }
-	   track_size = (disk_info[0x34+i]<<8);
-	} else {
+    	}
+		track_size = (disk_info[0x34+i]<<8);
+	} 
+	else 
+	{
 	   track_size=0x1300;
 	   offset += (track_size * track_number);
-        }
+    }
 
 	res = f_lseek(fil, offset);
 #ifdef ENABLE_SEMIHOSTING_LOAD_TRACK
@@ -499,16 +509,18 @@ FRESULT load_track(FIL *fil, uint32_t track_number, uint8_t *track, uint8_t *dis
 	}
 #endif
 	track_size = (track_size > MAX_TRACK_SIZE)? MAX_TRACK_SIZE:track_size;
-        if (res == FR_OK) {
+        if (res == FR_OK) 
+		{
              res = f_read(fil, track, track_size, &BytesRead);
 #ifdef ENABLE_SEMIHOSTING_LOAD_TRACK
              printf("AFTER f_read  %04x to %08x , res = %d, BytesRead = %d\n",size_of_track, track, res,BytesRead);
 #endif
-	}
+		}
 	return res;
 }
 
-FRESULT save_track(FIL *fil, uint32_t track_number, uint8_t *track, uint8_t *disk_info) {
+FRESULT save_track(FIL *fil, uint32_t track_number, uint8_t *track, uint8_t *disk_info) 
+{
         UINT BytesWritten;
         FRESULT res;
 
@@ -561,11 +573,11 @@ void compose_disk_name(char *b, uint8_t num)
 	   {
           for (int y=2;y>=0;y--)
 			{
-            t = x%10;
-            q[y] = t + '0';
-            x =x/10;
+				t = x%10;
+				q[y] = t + '0';
+				x =x/10;
           	}
-          	q+=3; p+=3;
+          		q+=3; p+=3;
        }
     }
     *q=0;
@@ -598,6 +610,13 @@ void build_sector_pointer_table(uint32_t *sector_table, uint8_t * track, uint8_t
 // probably dont need to turn the optimiser off, but it kept on annoying me at the time
 int __attribute__((optimize("O0")))  main(void) 
 {
+
+	// init code 
+
+	USART2_Init();
+	i2c_init();
+	lcd_init();
+	lcd_clear();
 	
 	char fname_buffer[20];
 	char *diskfname = fname_buffer;
@@ -703,7 +722,21 @@ int __attribute__((optimize("O0")))  main(void)
 		
 	while(1) 
 	{
-		lcd_send_string("TESTING OUTPUT")
+		
+
+
+
+		setCursor(0,0);
+		lcd_send_string("LCD 2004 I2C w STM32");
+		setCursor(0,1);
+		lcd_send_string("EmbeddedExpert.io");
+		setCursor(0,2);
+		lcd_send_string("Bare Metal");
+		setCursor(0,3);
+		sprintf(str,"var=%d",++var);
+		lcd_send_string(str);	
+
+
 		if (fdc_write_flush_count) 
 		{
 		//GPIOA->ODR = 1;
