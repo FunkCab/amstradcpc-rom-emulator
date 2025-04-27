@@ -12,7 +12,10 @@
 #include "i2c.h"
 #include "uart.h"
 #include "stdlib.h"
-#include "LiquidCrystal_PCF8574.h"
+void lcd_init (void);
+void lcd_send_string (char *str);
+void setCursor(int a, int b);
+void lcd_clear (void);
 
 
 uint16_t var;
